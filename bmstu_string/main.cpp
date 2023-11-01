@@ -2,7 +2,7 @@
 
 namespace bmstu {
     class string {
-    private:
+     private:
         /// приватные хелперы
         static size_t strlen_(const char *str) {
             size_t counter = 0;
@@ -22,7 +22,8 @@ namespace bmstu {
         /// Поля класса
         char *ptr_ = nullptr;
         int size_;
-    public:
+
+     public:
         /// Конструктор по умолчанию
         string() {
             ptr_ = new char[1];
@@ -114,7 +115,7 @@ namespace bmstu {
             ptr_[size_] = '\0';
         }
 
-        /*Все все понимают*/
+        /* Все все понимают */
         friend string operator+(const string &left, const string &right) {
             int new_size_ = left.size_ + right.size_;
             char *new_array_ = new char[new_size_ + 1];
