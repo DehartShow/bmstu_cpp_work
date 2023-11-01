@@ -2,9 +2,9 @@
 // Created by dehart on 10/16/23.
 //
 
-#ifndef CMAKE_EXAMPLE_REPO_MAIN_H
-#define CMAKE_EXAMPLE_REPO_MAIN_H
+#ifndef BMSTU_STRING_MAIN_H_
+#define BMSTU_STRING_MAIN_H_
 
 #include "main.cpp"
 
-#endif //CMAKE_EXAMPLE_REPO_MAIN_H
+#endif  // BMSTU_STRING_MAIN_H_

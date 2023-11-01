@@ -184,5 +184,5 @@ namespace bmstu {
             return index > size_ ? ptr_[0] : ptr_[index];
         }
     };
-}
+}  // namespace bmstu
 
