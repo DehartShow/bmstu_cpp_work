@@ -11,7 +11,9 @@ FetchContent_MakeAvailable(googletest)
 
 set(CMAKE_CXX_STANDARD 23)
 set(TEST_NAME ${PROJECT_NAME}_tests)
-add_executable(${TEST_NAME} example_test.cpp let1_tests.cpp let_1/let.h let_1/let.cpp)
+add_executable(${TEST_NAME} string_test.cpp bmstu_string/main.cpp bmstu_string/main.h
+        let_2_MobilePhone/main_let_2.cpp
+        let_2_MobilePhone/let_2.h)
 target_link_libraries(${TEST_NAME} gtest_main)
 
 enable_testing()
