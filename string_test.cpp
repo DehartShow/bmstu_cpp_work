@@ -20,7 +20,6 @@ TEST(BMSTU_test, sum) {
 }
 
 
-
 TEST(BMSTU_test, test2) {
     string str_1("2389");
     ASSERT_EQ(str_1.size(), 4);
