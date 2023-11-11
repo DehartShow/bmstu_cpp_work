@@ -1,188 +1,177 @@
 #include <iostream>
 
 namespace bmstu {
-    class string {
-     private:
-        /// приватные хелперы
-        static size_t strlen_(const char *str) {
-            size_t counter = 0;
-            while (str[counter] != '\0')
-                counter++;
-            return counter;
-        }
+class string {
+ private:
+  /// приватные хелперы
+  static size_t strlen_(const char *str) {
+    size_t counter = 0;
+    while (str[counter] != '\0') counter++;
+    return counter;
+  }
 
-        void clean_() {
-            if (!ptr_)
-                return;
+  void clean_() {
+    if (!ptr_) return;
 
-            size_ = 0;
-            delete[] ptr_;
-        }
+    size_ = 0;
+    delete[] ptr_;
+  }
 
-        /// Поля класса
-        char *ptr_ = nullptr;
-        int size_;
+  /// Поля класса
+  char *ptr_ = nullptr;
+  int size_;
 
-     public:
-        /// Конструктор по умолчанию
-        string() {
-            ptr_ = new char[1];
-            ptr_[0] = '\0';
-            size_ = 0;
-        }
+ public:
+  /// Конструктор по умолчанию
+  string() {
+    ptr_ = new char[1];
+    ptr_[0] = '\0';
+    size_ = 0;
+  }
 
-        /// Конструктор с параметром "cи строкой"
-        string(const char *c_str) {
-            size_ = strlen_(c_str);
-            ptr_ = new char[size_ + 1];
+  /// Конструктор с параметром "cи строкой"
+  string(const char *c_str) {
+    size_ = strlen_(c_str);
+    ptr_ = new char[size_ + 1];
 
-            for (int i = 0; i < size_; ++i)
-                ptr_[i] = c_str[i];
+    for (int i = 0; i < size_; ++i) ptr_[i] = c_str[i];
 
-            ptr_[size_] = '\0';
-        }
+    ptr_[size_] = '\0';
+  }
 
-        /// Копирующий конструктор
-        string(const string &other) {
-            size_ = other.size_;
-            ptr_ = new char[size_ + 1];
+  /// Копирующий конструктор
+  string(const string &other) {
+    size_ = other.size_;
+    ptr_ = new char[size_ + 1];
 
-            for (int i = 0; i < size_; ++i)
-                ptr_[i] = other.ptr_[i];
+    for (int i = 0; i < size_; ++i) ptr_[i] = other.ptr_[i];
 
-            ptr_[size_] = '\0';
-        }
+    ptr_[size_] = '\0';
+  }
 
-        /// Конструктор перемещения
-        string(string &&dying) noexcept {
-            size_ = dying.size_;
-            ptr_ = new char[size_ + 1];
+  /// Конструктор перемещения
+  string(string &&dying) noexcept {
+    size_ = dying.size_;
+    ptr_ = new char[size_ + 1];
 
-            for (int i = 0; i < size_; i++)
-                ptr_[i] = dying[i];
+    for (int i = 0; i < size_; i++) ptr_[i] = dying[i];
 
-            ptr_[size_] = '\0';
+    ptr_[size_] = '\0';
 
-            dying.clean_();
-        }
+    dying.clean_();
+  }
 
-        /// Деструктор
-        ~string() { clean_(); }
+  /// Деструктор
+  ~string() { clean_(); }
 
-        // Output string data
-        void print() { std::cout << ptr_ << std::endl; }
+  // Output string data
+  void print() { std::cout << ptr_ << std::endl; }
 
-        /// Геттер на си-строку
-        const char *c_str() const { return ptr_; }
+  /// Геттер на си-строку
+  const char *c_str() const { return ptr_; }
 
-        /// Геттер на размер
-        size_t size() const { return size_; }
+  /// Геттер на размер
+  size_t size() const { return size_; }
 
-        /// Оператор копирующего присваивания
-        string &operator=(const string &other) {
-            size_ = other.size_;
-            ptr_ = new char[size_ + 1];
+  /// Оператор копирующего присваивания
+  string &operator=(const string &other) {
+    size_ = other.size_;
+    ptr_ = new char[size_ + 1];
 
-            for (int i = 0; i < size_; ++i)
-                ptr_[i] = other.ptr_[i];
+    for (int i = 0; i < size_; ++i) ptr_[i] = other.ptr_[i];
 
-            ptr_[size_] = '\0';
-        }
+    ptr_[size_] = '\0';
+  }
 
-        /// Оператор перемещающего присваивания
-        string &operator=(string &&other) noexcept {
-            size_ = other.size_;
-            ptr_ = new char[size_ + 1];
+  /// Оператор перемещающего присваивания
+  string &operator=(string &&other) noexcept {
+    size_ = other.size_;
+    ptr_ = new char[size_ + 1];
 
-            for (int i = 0; i < size_; i++)
-                ptr_[i] = other[i];
+    for (int i = 0; i < size_; i++) ptr_[i] = other[i];
 
-            ptr_[size_] = '\0';
+    ptr_[size_] = '\0';
 
-            other.clean_();
+    other.clean_();
 
-            return *this;
-        }
+    return *this;
+  }
 
-        /// Оператор присваивания си строки
-        string &operator=(const char *c_str) {
-            size_ = strlen_(c_str);
-            ptr_ = new char[size_ + 1];
+  /// Оператор присваивания си строки
+  string &operator=(const char *c_str) {
+    size_ = strlen_(c_str);
+    ptr_ = new char[size_ + 1];
 
-            for (int i = 0; i < size_; i++)
-                ptr_[i] = c_str[i];
+    for (int i = 0; i < size_; i++) ptr_[i] = c_str[i];
 
-            ptr_[size_] = '\0';
-        }
+    ptr_[size_] = '\0';
+  }
 
-        /* Все все понимают */
-        friend string operator+(const string &left, const string &right) {
-            int new_size_ = left.size_ + right.size_;
-            char *new_array_ = new char[new_size_ + 1];
+  /* Все все понимают */
+  friend string operator+(const string &left, const string &right) {
+    int new_size_ = left.size_ + right.size_;
+    char *new_array_ = new char[new_size_ + 1];
 
-            for (int i = 0; i < left.size_; i++)
-                new_array_[i] = left.ptr_[i];
+    for (int i = 0; i < left.size_; i++) new_array_[i] = left.ptr_[i];
 
-            for (int i = 0; i < right.size_; i++)
-                new_array_[left.size_ + i] = right.ptr_[i];
+    for (int i = 0; i < right.size_; i++)
+      new_array_[left.size_ + i] = right.ptr_[i];
 
-            new_array_[new_size_] = '\0';
+    new_array_[new_size_] = '\0';
 
-            string out = new_array_;
-            delete[] new_array_;
+    string out = new_array_;
+    delete[] new_array_;
 
-            return out;
-        }
+    return out;
+  }
 
-        friend std::ostream &operator<<(std::ostream &os, const string &obj) {
-            os << obj.c_str();
-            return os;
-        }
+  friend std::ostream &operator<<(std::ostream &os, const string &obj) {
+    os << obj.c_str();
+    return os;
+  }
 
-        friend std::istream &operator>>(std::istream &is, string &obj) {
-            int i = 0;
-            char *input_str = new char[i];
+  friend std::istream &operator>>(std::istream &is, string &obj) {
+    int i = 0;
+    char *input_str = new char[i];
 
-            do {
-                char sup = 0;
-                is >> sup;
-                input_str[i] = sup;
-                if (sup == 0) {
-                    break;
-                }
-                i++;
-            } while (true);
+    do {
+      char sup = 0;
+      is >> sup;
+      input_str[i] = sup;
+      if (sup == 0) {
+        break;
+      }
+      i++;
+    } while (true);
 
-            obj = input_str;
-            delete[] input_str;
+    obj = input_str;
+    delete[] input_str;
 
-            return is;
-        }
+    return is;
+  }
 
-        string &operator+=(const string &other) {
-            *this = (*this + other);
-            return *this;
-        }
+  string &operator+=(const string &other) {
+    *this = (*this + other);
+    return *this;
+  }
 
-        string &operator+=(char symbol) {
-            int newsize_ = size_ + sizeof(symbol);
+  string &operator+=(char symbol) {
+    int newsize_ = size_ + sizeof(symbol);
 
-            char *out = new char[newsize_ + 1];
-            for (int i = 0; i < size_; i++)
-                out[i] = ptr_[i];
+    char *out = new char[newsize_ + 1];
+    for (int i = 0; i < size_; i++) out[i] = ptr_[i];
 
-            out[newsize_ - 1] = symbol;
-            out[newsize_] = '\0';
+    out[newsize_ - 1] = symbol;
+    out[newsize_] = '\0';
 
-            *this = string(out);
-            delete[] out;
+    *this = string(out);
+    delete[] out;
 
-            return *this;
-        }
+    return *this;
+  }
 
-        char &operator[](size_t index) {
-            return index > size_ ? ptr_[0] : ptr_[index];
-        }
-    };
+  char &operator[](size_t index) {
+    return index > size_ ? ptr_[0] : ptr_[index];
+  }
+};
 }  // namespace bmstu
-
