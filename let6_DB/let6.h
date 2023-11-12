@@ -1,6 +1,9 @@
 //
 // Created by dehart on 11/11/23.
 //
+#ifndef LET6_DB_LET6_H_
+#define LET6_DB_LET6_H_
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -83,3 +86,5 @@ int main() {
     std::cout << "Введена неверная команда" << std::endl;
   }
 }
+
+#endif  // LET6_DB_LET6_H_
