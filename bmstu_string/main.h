@@ -30,14 +30,14 @@ class string {
 
  public:
   /// Конструктор по умолчанию
-  explicit string() {
+  string() {
     ptr_ = new char[1];
     ptr_[0] = '\0';
     size_ = 0;
   }
 
   /// Конструктор с параметром "cи строкой"
-  string(const char *c_str) {
+  explicit string(const char *c_str) {
     size_ = strlen_(c_str);
     ptr_ = new char[size_ + 1];
 
@@ -126,7 +126,7 @@ class string {
 
     new_array_[new_size_] = '\0';
 
-    string out = new_array_;
+    string out = static_cast<bmstu::string>(new_array_);
     delete[] new_array_;
 
     return out;
@@ -182,6 +182,5 @@ class string {
   }
 };
 }  // namespace bmstu
-
 
 #endif  // BMSTU_STRING_MAIN_H_

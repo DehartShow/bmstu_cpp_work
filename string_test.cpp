@@ -3,7 +3,7 @@
 #include "bmstu_string/main.h"
 
 TEST(BMSTU_Test, test1) {
-  bmstu::string a = "NIGGERS";
+  bmstu::string a("NIGGERS");
   ASSERT_EQ(a[0], 'N');
   ASSERT_EQ(a[1], 'I');
   ASSERT_EQ(a[2], 'G');
@@ -31,7 +31,7 @@ TEST(BMSTU_test, test2) {
   bmstu::string &sum_str_1_str_2_ref = sum_str_1_2;
   bmstu::string complex_str = sum_str_1_str_2_ref + str_1_ref;
   ASSERT_EQ(complex_str.size(), str_1.size() + str_2.size() + str_1_ref.size());
-  bmstu::string str_4 = "DOTA2";
+  bmstu::string str_4("DOTA2");
   bmstu::string str_5 = str_4 + str_1;
   ASSERT_EQ(str_5.size(), 9);
 }
