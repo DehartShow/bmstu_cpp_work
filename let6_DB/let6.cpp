@@ -32,7 +32,7 @@ int main() {
     return 1;
   }
   u_int32_t count_students;
-  file.read((char *)&count_students, sizeof(count_students));
+  file.read(reinterpret_cast<char *>(&count_students), sizeof(count_students));
 
   std::vector<Student> students;
   students.resize(count_students);
@@ -40,8 +40,8 @@ int main() {
   for (size_t i = 0; i < count_students, file.peek() != EOF; ++i) {
     Student student;
     std::getline(file, student.name, '\0');
-    file.read((char *)&student.age, sizeof(int));
-    file.read((char *)&student.rating, sizeof(int));
+    file.read(reinterpret_cast<char *>(&student.age), sizeof(int));
+    file.read(reinterpret_cast<char *>(&student.rating), sizeof(int));
     students[i] = std::move(student);
   }
 
