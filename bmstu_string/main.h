@@ -19,7 +19,6 @@ class string {
 
   void clean_() {
     if (!ptr_) return;
-
     size_ = 0;
     delete[] ptr_;
   }
@@ -40,9 +39,7 @@ class string {
   explicit string(const char *c_str) {
     size_ = strlen_(c_str);
     ptr_ = new char[size_ + 1];
-
     for (int i = 0; i < size_; ++i) ptr_[i] = c_str[i];
-
     ptr_[size_] = '\0';
   }
 
@@ -50,22 +47,17 @@ class string {
   string(const string &other) {
     size_ = other.size_;
     ptr_ = new char[size_ + 1];
-
     for (int i = 0; i < size_; ++i) ptr_[i] = other.ptr_[i];
-
     ptr_[size_] = '\0';
   }
 
   /// Конструктор перемещения
   string(string &&dying) noexcept {
     size_ = dying.size_;
-    ptr_ = new char[size_ + 1];
-
-    for (int i = 0; i < size_; i++) ptr_[i] = dying[i];
-
+    ptr_ = dying.ptr_;
     ptr_[size_] = '\0';
-
-    dying.clean_();
+    dying.ptr_ = nullptr;
+    dying.size_ = 0;
   }
 
   /// Деструктор
@@ -84,23 +76,18 @@ class string {
   string &operator=(const string &other) {
     size_ = other.size_;
     ptr_ = new char[size_ + 1];
-
     for (int i = 0; i < size_; ++i) ptr_[i] = other.ptr_[i];
-
     ptr_[size_] = '\0';
+    return *this;
   }
 
   /// Оператор перемещающего присваивания
   string &operator=(string &&other) noexcept {
     size_ = other.size_;
     ptr_ = new char[size_ + 1];
-
     for (int i = 0; i < size_; i++) ptr_[i] = other[i];
-
     ptr_[size_] = '\0';
-
     other.clean_();
-
     return *this;
   }
 
@@ -108,27 +95,21 @@ class string {
   string &operator=(const char *c_str) {
     size_ = strlen_(c_str);
     ptr_ = new char[size_ + 1];
-
     for (int i = 0; i < size_; i++) ptr_[i] = c_str[i];
-
     ptr_[size_] = '\0';
+    return *this;
   }
 
   /* Все все понимают */
   friend string operator+(const string &left, const string &right) {
     int new_size_ = left.size_ + right.size_;
     char *new_array_ = new char[new_size_ + 1];
-
     for (int i = 0; i < left.size_; i++) new_array_[i] = left.ptr_[i];
-
     for (int i = 0; i < right.size_; i++)
       new_array_[left.size_ + i] = right.ptr_[i];
-
     new_array_[new_size_] = '\0';
-
     string out = static_cast<bmstu::string>(new_array_);
     delete[] new_array_;
-
     return out;
   }
 
@@ -164,13 +145,10 @@ class string {
 
   string &operator+=(char symbol) {
     int newsize_ = size_ + sizeof(symbol);
-
     char *out = new char[newsize_ + 1];
     for (int i = 0; i < size_; i++) out[i] = ptr_[i];
-
     out[newsize_ - 1] = symbol;
     out[newsize_] = '\0';
-
     *this = string(out);
     delete[] out;
 

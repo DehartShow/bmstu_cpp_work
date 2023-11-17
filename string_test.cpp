@@ -10,14 +10,19 @@ TEST(BMSTU_Test, test1) {
   ASSERT_EQ(a[3], 'G');
 }
 
-TEST(BMSTU_test, sum) {
-  bmstu::string str_1("iu10");
-  bmstu::string str_2("-16");
-  bmstu::string str_3 = str_1 + str_2;
-  ASSERT_STREQ(str_3.c_str(), "iu10-16");
+TEST(BMSTUTetst, EmptyCStr) {
+  bmstu::string a("");
+  EXPECT_STREQ(a.c_str(), "");
 }
 
-TEST(BMSTU_test, test2) {
+TEST(BMSTUTest, concatenation) {
+  bmstu::string first_str("Hello, ");
+  bmstu::string second_str("Dehart!");
+  bmstu::string result = first_str + second_str;
+  EXPECT_STREQ(result.c_str(), "Hello, Dehart!");
+}
+
+TEST(BMSTUtest, test2) {
   bmstu::string str_1("2389");
   ASSERT_EQ(str_1.size(), 4);
   bmstu::string str_2(" ");
@@ -36,7 +41,7 @@ TEST(BMSTU_test, test2) {
   ASSERT_EQ(str_5.size(), 9);
 }
 
-TEST(BMSTU_test, test_c_str) {
+TEST(BMSTUTest, test_c_str) {
   bmstu::string str_1("Ershov is the BEST!!!");
   ASSERT_STREQ(str_1.c_str(), "Ershov is the BEST!!!");
   bmstu::string str_2("");
@@ -45,7 +50,7 @@ TEST(BMSTU_test, test_c_str) {
   ASSERT_STREQ(str_3.c_str(), "1233456*&%&%___asfdgfQEWRWQEW");
 }
 
-TEST(BMSTU_test, ostream) {
+TEST(BMSTUTest, ostream) {
   bmstu::string str_1("BMSTU");
   std::stringstream os_1;
   os_1 << str_1;
@@ -63,14 +68,21 @@ TEST(BMSTU_test, ostream) {
   EXPECT_EQ(os_3.str().size(), 0);
 }
 
-TEST(BMSTU_test, constructor_from_char) {
+TEST(BMSTUTest, istream) {
+  bmstu::string str1("123");
+  std::stringstream os;
+  os << str1;
+  EXPECT_STREQ("123", os.str().c_str());
+}
+
+TEST(BMSTUTest, constructor_from_char) {
   const char *charArray = "Hello, Dehart!";
   bmstu::string str_1(charArray);
   EXPECT_EQ(str_1.size(), strlen(charArray));
   EXPECT_STREQ(str_1.c_str(), charArray);
 }
 
-TEST(BMSTU_test, copy_constructor) {
+TEST(BMSTUTest, copy_constructor) {
   const char *charArray = "Hello, Dehart!";
   bmstu::string str_1(charArray);
   bmstu::string copy_str(str_1);
@@ -78,9 +90,10 @@ TEST(BMSTU_test, copy_constructor) {
   EXPECT_STREQ(str_1.c_str(), copy_str.c_str());
 }
 
-TEST(BMSTU_test, concatenation) {
-  bmstu::string first_str("Hello, ");
-  bmstu::string second_str("Dehart!");
-  bmstu::string result = first_str + second_str;
-  EXPECT_STREQ(result.c_str(), "Hello, Dehart!");
+TEST(BMSTUTest, move_constructor) {
+  bmstu::string str_1("Hello, Dehart!");
+  bmstu::string copy_str(std::move(str_1));
+  EXPECT_EQ(str_1.size(), 0);
+  EXPECT_EQ(copy_str.size(), 14);
+  EXPECT_STREQ(copy_str.c_str(), "Hello, Dehart!");
 }
