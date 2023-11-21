@@ -12,8 +12,10 @@ FetchContent_MakeAvailable(googletest)
 set(CMAKE_CXX_STANDARD 23)
 set(TEST_NAME ${PROJECT_NAME}_tests)
 add_executable(${TEST_NAME} string_test.cpp bmstu_string/main.cpp bmstu_string/main.h
-        let_2_MobilePhone/main_let_2.cpp
-        let_2_MobilePhone/let_2.h
+        bmstu_list/bmstu_list.h
+        let7/let7.cpp
+        dummy_vector_test.cpp
+
 )
 target_link_libraries(${TEST_NAME} gtest_main)
 
