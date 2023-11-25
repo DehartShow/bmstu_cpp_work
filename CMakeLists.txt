@@ -12,8 +12,8 @@ FetchContent_MakeAvailable(googletest)
 set(CMAKE_CXX_STANDARD 23)
 set(TEST_NAME ${PROJECT_NAME}_tests)
 add_executable(${TEST_NAME} string_test.cpp bmstu_string/main.cpp bmstu_string/main.h
-        bmstu_list/bmstu_list.h
-        let7/let7.cpp
+        dummy_vector/dummy_vector.h
+        dummy_vector/array_bundle.h
         dummy_vector_test.cpp
 
 )
