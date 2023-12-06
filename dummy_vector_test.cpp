@@ -34,7 +34,6 @@ TEST(DummyVectorTest, pushback) {
   ASSERT_EQ(a.capacity(), 8);
 }
 
-
 TEST(DummyVectorTest, lexical) {
   bmstu::vector<char> v{'1', '2', '3'};
   bmstu::vector<char> v_c{'1', '2', '3'};
@@ -787,9 +786,7 @@ TEST(DummyVector, Push) {
   ASSERT_EQ(v[1], 42);
 }
 
-TEST(DummyVector, CopyConstruct)
-// Конструктор копирования
-{
+TEST(DummyVector, CopyConstruct) {
   bmstu::vector<int> numbers{1, 2};
   auto numbers_copy(numbers);
   ASSERT_TRUE(&numbers_copy[0] != &numbers[0]);
@@ -821,26 +818,6 @@ TEST(DummyVector, Capacity) {
   ASSERT_EQ(v.size(), 2);
   ASSERT_EQ(v.capacity(), old_capacity);
 }
-
-//TEST(DummyVector, Iterate) {
-//  // Итерирование по bmstu::dummy_vector
-//  {
-//    // Пустой вектор
-//    {
-//      bmstu::vector<int> v;
-//      ASSERT_EQ(v.begin(), nullptr);
-//      ASSERT_EQ(v.end(), nullptr);
-//    }
-//
-//    // Непустой вектор
-//    {
-//      bmstu::vector<int> v(10, 42);
-//      //            ASSERT_TRUE(v.begin());
-//      ASSERT_EQ(*v.begin(), 42);
-//      ASSERT_EQ(v.end(), v.begin() + v.size());
-//    }
-//  }
-//}
 
 TEST(DummyVector, Compare) {
   {
@@ -1094,7 +1071,7 @@ class WithoutDefaultConstructor {
  public:
   WithoutDefaultConstructor() = delete;
 
-  WithoutDefaultConstructor(int other) : number(other) {}
+  WithoutDefaultConstructor(int other) : number(other) { /* NOLINT */ }
 
   int number;
 };

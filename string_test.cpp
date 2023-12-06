@@ -2,7 +2,7 @@
 
 #include "bmstu_string/bmstu_string.h"
 #include <iostream>
-#include <utility>
+
 using bmstu::basic_string;
 
 TEST(BMSTU_Test, test1) {
