@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "bmstu_string/bmstu_string.h"
 #include <iostream>
+#include "bmstu_string/bmstu_string.h"
 
 using bmstu::basic_string;
 

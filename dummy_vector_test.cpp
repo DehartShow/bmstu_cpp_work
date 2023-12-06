@@ -1,11 +1,11 @@
-#include "dummy_vector/dummy_vector.h"
-
 #include <gtest/gtest.h>
 
 #include <iostream>
 #include <numeric>
 #include <utility>
 #include <vector>
+
+#include "dummy_vector/dummy_vector.h"
 
 TEST(DummyVectorTest, null) {
   bmstu::vector<int> a;
@@ -943,7 +943,7 @@ class X {
  public:
   X() : X(5) {}
 
-  X(size_t num) : x_(num) {}
+  explicit X(size_t num) : x_(num) {}
 
   X(const X& other) = delete;
 
