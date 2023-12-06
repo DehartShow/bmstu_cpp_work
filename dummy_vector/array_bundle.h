@@ -3,13 +3,18 @@
 //
 #pragma once
 #include <iostream>
-#ifndef DUMMY_VECTOR_ARRAY_BUNDLE_H_
-#define DUMMY_VECTOR_ARRAY_BUNDLE_H_
+#include <utility>
+
 template <typename T>
 class array_bundle {
  public:
   array_bundle() = default;
-  explicit array_bundle(size_t size) { raw_ptr_ = new T[size]; }
+  explicit array_bundle(size_t size) {
+    if (size == 0) {
+      raw_ptr_ = nullptr;
+    }
+    raw_ptr_ = new T[size];
+  }
 
   explicit array_bundle(T *ptr) noexcept { raw_ptr_ = ptr; }
 
@@ -18,18 +23,18 @@ class array_bundle {
   array_bundle &operator=(const array_bundle &other_bundle) = delete;
 
   T &operator[](size_t index) noexcept {
-    return index > sizeof(raw_ptr_) ? raw_ptr_[0] : raw_ptr_[index];
+    return raw_ptr_[index];
   }
 
   const T &operator[](size_t index) const noexcept {
-    return index > sizeof(raw_ptr_) ? raw_ptr_[0] : raw_ptr_[index];
+    return raw_ptr_[index];
   }
   explicit operator bool() const { return raw_ptr_ != nullptr; }
 
   T *Release() noexcept {
-    auto release = raw_ptr_;
+    T *ptr = raw_ptr_;
     raw_ptr_ = nullptr;
-    return release;
+    return ptr;
   }
 
   T *Get() const noexcept { return raw_ptr_; }
@@ -44,4 +49,3 @@ class array_bundle {
   T *raw_ptr_ = nullptr;
 };
 
-#endif  // DUMMY_VECTOR_ARRAY_BUNDLE_H_

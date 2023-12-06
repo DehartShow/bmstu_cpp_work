@@ -7,165 +7,201 @@
 #include <iostream>
 
 namespace bmstu {
-    template<typename T>
-    class basic_string;
-    typedef basic_string<char> string;
-    typedef basic_string<wchar_t> wstring;
-    //    typedef basic_string<char8_t> u8string;
-    typedef basic_string<char16_t> u16string;
-    typedef basic_string<char32_t> u32string;
+template <typename T>
+class basic_string;
+typedef basic_string<char> string;
+typedef basic_string<wchar_t> wstring;
+typedef basic_string<char8_t> u8string;
+typedef basic_string<char16_t> u16string;
+typedef basic_string<char32_t> u32string;
 
-    template<typename T>
-    class basic_string {
-    private:
-        /// приватные хелперы
-        static size_t strlen_(const char* str) {
-            size_t counter = 0;
-            while (str[counter] != '\0') counter++;
-            return counter;
-        }
+template <typename T>
+class basic_string {
+ private:
+  /// приватные хелперы
+  static size_t strlen_(const T* str) {
+    size_t counter = 0;
+    while (str[counter] != 0) counter++;
+    return counter;
+  }
 
-        void clean_() {
-            if (!ptr_) return;
-            size_ = 0;
-            delete[] ptr_;
-        }
+  static size_t strlen_(const basic_string &input) {
+    return input.size_;
+  }
 
-        /// Поля класса
-        char* ptr_ = nullptr;
-        int size_;
+  void clean_() {
+    if (!ptr_) return;
+    size_ = 0;
+    delete[] ptr_;
+  }
 
-    public:
-        /// Конструктор по умолчанию
-        basic_string() {
-            ptr_ = new char[1];
-            ptr_[0] = '\0';
-            size_ = 0;
-        }
+  void copy_data_(const T* str) {
+    for (size_t i = 0; i < strlen_(str); ++i) {
+      ptr_[i] = str[i];
+    }
+    ptr_[size_] = 0;
+  }
 
-        /// Конструктор с параметром "cи строкой"
-        explicit basic_string(const char* c_str) {
-            size_ = strlen_(c_str);
-            ptr_ = new char[size_ + 1];
-            for (int i = 0; i < size_; ++i) ptr_[i] = c_str[i];
-            ptr_[size_] = '\0';
-        }
+  /// Поля класса
+  T* ptr_ = nullptr;
+  size_t size_ = 0;
 
-        /// Копирующий конструктор
-        basic_string(const basic_string&other) {
-            size_ = other.size_;
-            ptr_ = new char[size_ + 1];
-            for (int i = 0; i < size_; ++i) ptr_[i] = other.ptr_[i];
-            ptr_[size_] = '\0';
-        }
+ public:
+  /// Конструктор по умолчанию
+  basic_string() {
+    ptr_ = new T[1];
+    ptr_[0] = 0;
+    size_ = 0;
+  }
 
-        /// Конструктор перемещения
-        basic_string(basic_string&&dying) noexcept {
-            size_ = dying.size_;
-            ptr_ = dying.ptr_;
-            ptr_[size_] = '\0';
-            dying.ptr_ = nullptr;
-            dying.size_ = 0;
-        }
+  explicit basic_string(size_t size) {
+    size_ = size;
+    ptr_ = new T[size_ + 1];
+    for (size_t i = 0; i < size_; ++i) {
+      ptr_[i] = ' ';
+    }
+    ptr_[size_] = 0;
+  }
 
-        /// Деструктор
-        ~basic_string() { clean_(); }
+  basic_string(std::initializer_list<T> list) {
+    size_ = list.size();
+    ptr_ = new T[size_ + 1];
+    size_t i = 0;
+    for (auto &item : list) {
+      ptr_[i] = item;
+      ++i;
+    }
+    ptr_[size_] = 0;
+  }
 
-        // Output basic_string data
-        void print() { std::cout << ptr_ << std::endl; }
+  /// Конструктор с параметром "cи строкой"
+  basic_string(const T* c_str) { // NOLINT
+    size_ = strlen_(c_str);
+    ptr_ = new T[size_ + 1];
+    copy_data_(c_str);
+  }
 
-        /// Геттер на си-строку
-        const char* c_str() const { return ptr_; }
+  /// Копирующий конструктор
+  basic_string(const basic_string& other) {
+    size_ = other.size_;
+    ptr_ = new T[size_ + 1];
+    copy_data_(other.c_str());
+  }
 
-        /// Геттер на размер
-        size_t size() const { return size_; }
+  /// Конструктор перемещения
+  basic_string(basic_string&& dying) noexcept {
+    size_ = dying.size_;
+    ptr_ = dying.ptr_;
+    dying.ptr_ = nullptr;
+    dying.size_ = 0;
+  }
 
-        /// Оператор копирующего присваивания
-        basic_string& operator=(const basic_string&other) {
-            size_ = other.size_;
-            ptr_ = new char[size_ + 1];
-            for (int i = 0; i < size_; ++i) ptr_[i] = other.ptr_[i];
-            ptr_[size_] = '\0';
-            return *this;
-        }
+  /// Деструктор
+  ~basic_string() { clean_(); }
 
-        /// Оператор перемещающего присваивания
-        basic_string& operator=(basic_string&&other) noexcept {
-            size_ = other.size_;
-            ptr_ = new char[size_ + 1];
-            for (int i = 0; i < size_; i++) ptr_[i] = other[i];
-            ptr_[size_] = '\0';
-            other.clean_();
-            return *this;
-        }
+  // Output basic_string data
+  void print() { std::cout << ptr_ << std::endl; }
 
-        /// Оператор присваивания си строки
-        basic_string& operator=(const char* c_str) {
-            size_ = strlen_(c_str);
-            ptr_ = new char[size_ + 1];
-            for (int i = 0; i < size_; i++) ptr_[i] = c_str[i];
-            ptr_[size_] = '\0';
-            return *this;
-        }
+  /// Геттер на си-строку
+  [[nodiscard]] const T* c_str() const {
+    return (ptr_ != nullptr) ? ptr_ : reinterpret_cast<const T*>("");
+  }
 
-        /* Все все понимают */
-        friend basic_string operator+(const basic_string&left, const basic_string&right) {
-            int new_size_ = left.size_ + right.size_;
-            char* new_array_ = new char[new_size_ + 1];
-            for (int i = 0; i < left.size_; i++) new_array_[i] = left.ptr_[i];
-            for (int i = 0; i < right.size_; i++)
-                new_array_[left.size_ + i] = right.ptr_[i];
-            new_array_[new_size_] = '\0';
-            basic_string out = static_cast<bmstu::basic_string>(new_array_);
-            delete[] new_array_;
-            return out;
-        }
+  /// Геттер на размер
+  [[nodiscard]] size_t size() const { return size_; }
 
-        friend std::ostream& operator<<(std::ostream&os, const basic_string&obj) {
-            os << obj.c_str();
-            return os;
-        }
+  /// Оператор копирующего присваивания
+  basic_string& operator=(const basic_string& other) {
+    clean_();
+    size_ = other.size_;
+    ptr_ = new T[size_ + 1];
+    copy_data_(other.c_str());
+    ptr_[size_] = 0;
+    return *this;
+  }
 
-        friend std::istream& operator>>(std::istream&is, basic_string&obj) {
-            int i = 0;
-            char* input_str = new char[i];
+  /// Оператор перемещающего присваивания
+  basic_string& operator=(basic_string&& other) noexcept {
+    delete[] ptr_;
+    size_ = other.size_;
+    ptr_ = other.ptr_;
+    other.ptr_ = nullptr;
+    other.size_ = 0;
+    return *this;
+  }
 
-            do {
-                char sup = 0;
-                is >> sup;
-                input_str[i] = sup;
-                if (sup == 0) {
-                    break;
-                }
-                i++;
-            }
-            while (true);
+  /// Оператор присваивания си строки
+  basic_string& operator=(const T* c_str) {
+    clean_();
+    size_ = strlen_(c_str);
+    ptr_ = new T[size_ + 1];
+    for (int i = 0; i < size_; i++) ptr_[i] = c_str[i];
+    ptr_[size_] = 0;
+    return *this;
+  }
 
-            obj = input_str;
-            delete[] input_str;
+  /* Все все понимают */
+  friend bmstu::basic_string<T> operator+(const basic_string& left,
+                                          const basic_string& right) {
+    basic_string result;
+    result.size_ = left.size_ + right.size_;
+    result.ptr_ = new T[result.size_ + 1];
+    result.copy_data_(left.c_str());
+    for (size_t i = 0; i < right.size_; ++i) {
+      result.ptr_[i + left.size_] = right.ptr_[i];
+    }
+    return result;
+  }
 
-            return is;
-        }
+  friend std::basic_ostream<T>& operator<<(std::basic_ostream<T> &os,
+                                           const basic_string& obj) {
+    os << obj.c_str();
+    return os;
+  }
 
-        basic_string& operator+=(const basic_string&other) {
-            *this = (*this + other);
-            return *this;
-        }
+  friend std::basic_istream<T>& operator>>(std::basic_istream<T> &is,
+                                           basic_string& obj) {
+    is >> std::noskipws;
+    T symbol = 1;
+    for (size_t i = 0; symbol != 0; ++i) {
+      symbol = 0;
+      is >> symbol;
+      if (symbol != 0) {
+        obj += symbol;
+      }
+    }
+    return is;
+  }
 
-        basic_string& operator+=(char symbol) {
-            int newsize_ = size_ + sizeof(symbol);
-            char* out = new char[newsize_ + 1];
-            for (int i = 0; i < size_; i++) out[i] = ptr_[i];
-            out[newsize_ - 1] = symbol;
-            out[newsize_] = '\0';
-            *this = basic_string(out);
-            delete[] out;
+  basic_string& operator+=(const basic_string& other) {
+    *this = (*this + other);
+    return *this;
+  }
 
-            return *this;
-        }
+  bool operator==(const basic_string& input) const {
+    if (input.size_ != size_) return false;
+    if (input.ptr_ == ptr_) return true;
+    for (size_t i = 0; i < input.size_; ++i) {
+      if (ptr_[i] != input[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-        char& operator[](size_t index) {
-            return index > size_ ? ptr_[0] : ptr_[index];
-        }
-    };
-} // namespace bmstu
+  basic_string& operator+=(const T symbol) {
+    T *prev_data = ptr_;
+    ++size_;
+    ptr_ = new T[size_ + 1];
+    copy_data_(prev_data);
+    delete[] prev_data;
+    ptr_[size_ - 1] = symbol;
+    ptr_[size_] = 0;
+    return *this;
+  }
+
+  T& operator[](size_t index) {
+    return index > size_ ? ptr_[0] : ptr_[index];
+  }
+};
+}  // namespace bmstu

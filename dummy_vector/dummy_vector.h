@@ -1,12 +1,11 @@
 //
 // Created by dehart on 11/16/23.
 //
+#pragma once
 #include <algorithm>
-#include <iostream>
+#include <utility>
 
 #include "array_bundle.h"
-#ifndef DUMMY_VECTOR_DUMMY_VECTOR_H_
-#define DUMMY_VECTOR_DUMMY_VECTOR_H_
 
 namespace bmstu {
 template <typename Type>
@@ -35,16 +34,19 @@ class vector {
     }
     iterator operator++(int) {
       iterator old = *this;
-      ++m_ptr;
+      ++(*this);
       return old;
     }
     iterator operator--(int) {
       iterator old = *this;
-      --m_ptr;
+      --(*this);
       return old;
     }
     friend bool operator==(const iterator &a, const iterator &b) {
       return a.m_ptr == b.m_ptr;
+    }
+    friend bool operator==(const iterator &a, const std::nullptr_t &b) {
+      return a.m_ptr == b;
     }
     friend bool operator!=(const iterator &a, const iterator &b) {
       return !(a == b);
@@ -54,13 +56,15 @@ class vector {
       difference_type result = end.m_ptr - begin.m_ptr;
       return result;
     }
-    iterator &operator+(size_t n) noexcept {
-      m_ptr += n;
-      return *this;
+    iterator operator+(const difference_type value) noexcept {
+      iterator copy(*this);
+      copy.m_ptr += value;
+      return copy;
     }
-    iterator &operator-(size_t n) noexcept {
-      m_ptr -= n;
-      return *this;
+    iterator operator-(const difference_type value) noexcept {
+      iterator copy(*this);
+      copy.m_ptr -= value;
+      return copy;
     }
 
    private:
@@ -94,9 +98,20 @@ class vector {
       *vit = *it;
     }
   }
-  void clear() noexcept { *this = {}; }
+  void clear() noexcept { size_ = 0; }
   vector &operator=(const vector<Type> &other) {
-    this = {other};
+    if (other.empty()) {
+      clear();
+      return *this;
+    }
+    size_ = other.size_;
+    capacity_ = other.capacity_;
+    auto first = begin();
+    auto ofirst = other.begin();
+    auto olast = other.end();
+    for (; ofirst != olast; ++ofirst, ++first) {
+      *first = *ofirst;
+    }
     return *this;
   }
   vector &operator=(vector<Type> &&other) {
@@ -105,8 +120,8 @@ class vector {
   }
   iterator begin() noexcept { return iterator(data_.Get()); }
   iterator end() noexcept { return iterator(data_.Get()) + size_; }
-  const_iterator begin() const noexcept { return iterator(data_.Get()); }
-  const_iterator end() const noexcept { return iterator(data_.Get() + size_); }
+  iterator begin() const noexcept { return iterator(data_.Get()); }
+  iterator end() const noexcept { return iterator(data_.Get()) + size_; }
   const_iterator cbegin() const noexcept { return iterator(data_.Get()); }
   const_iterator cend() const noexcept { return iterator(data_.Get() + size_); }
 
@@ -203,15 +218,22 @@ class vector {
     ++size_;
     return begin() + n;
   }
+  iterator erase(iterator pos) {
+    size_t index = pos - cbegin();
+    if (!empty()) {
+      std::move(begin() + index + 1, end(), begin() + index);
+      --size_;
+    }
+    return begin() + index;
+  }
   void push_back(const Type &value) { insert(end(), value); }
-  void push_back(Type &&value) { insert(end(), value); }
+  void push_back(Type &&value) { insert(end(), std::move(value)); }
   void pop_back() noexcept { (*this)[--size_] = {}; }
   friend bool operator==(const vector<Type> &l, const vector<Type> &r) {
-    if (l.size() != r.size()) {
-      return false;
-    }
-    for (size_t i = 0; i < l.size(); ++i) {
-      if (l[i] != r[i]) {
+    if (l.size() != r.size()) return false;
+    for (auto l_it = l.begin(), r_it = r.begin(); l_it != l.end();
+         ++l_it, ++r_it) {
+      if (*l_it != *r_it) {
         return false;
       }
     }
@@ -233,9 +255,14 @@ class vector {
     return !(l < r);
   }
   friend std::ostream &operator<<(std::ostream &os, const vector<Type> &other) {
-    for (auto i = other.begin(); i != other.end(); ++i) {
-      os << *i << " ";
+    os << "[ ";
+    for (size_t i = 0; i < other.size(); ++i) {
+      os << other[i];
+      if (i < other.size() - 1) {
+        os << ", ";
+      }
     }
+    os << " ]";
     return os;
   }
 
@@ -261,5 +288,3 @@ class vector {
   array_bundle<Type> data_;
 };
 }  // namespace bmstu
-
-#endif  // DUMMY_VECTOR_DUMMY_VECTOR_H_
