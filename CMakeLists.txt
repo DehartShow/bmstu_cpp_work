@@ -15,6 +15,8 @@ add_executable(${TEST_NAME} string_test.cpp bmstu_string/bmstu_string.h
         dummy_vector/dummy_vector.h
         dummy_vector/array_bundle.h
         dummy_vector_test.cpp
+        list_test.cpp
+        dummy_list/dummy_list.h
 
 
 )
