@@ -1,8 +1,8 @@
-#include <../cmake-build-debug/_deps/googletest-src/googletest/include/gtest/gtest.h>
+#include <gtest/gtest.h>
 
 #include <iostream>
 
-#include "bmstu_string.h"
+#include "bmstu_string_hw.h"
 
 using bmstu::basic_string;
 
