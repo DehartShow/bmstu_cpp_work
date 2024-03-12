@@ -11,7 +11,7 @@ class bad_optional_access : public std::exception {
   using exception::exception;
 
   virtual const char *what() const noexcept {
-    return "Bad optional access";
+    return "Bad bmstu_optional access";
   }
 };
 

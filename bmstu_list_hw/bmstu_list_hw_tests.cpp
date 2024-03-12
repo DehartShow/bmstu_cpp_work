@@ -3,7 +3,7 @@
 //
 #include <gtest/gtest.h>
 
-#include "dummy_list/dummy_list.h"
+#include "bmstu_list_hw.h"
 
 TEST(ListTest, 1DefaultListTest) {
   bmstu::list<int> my_list;

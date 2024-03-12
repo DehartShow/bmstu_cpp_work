@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
+#include "dummy_vector.h"
+
+#include <../cmake-build-debug/_deps/googletest-src/googletest/include/gtest/gtest.h>
 
 #include <iostream>
 #include <numeric>
 #include <utility>
 #include <vector>
-
-#include "dummy_vector/dummy_vector.h"
 
 TEST(DummyVectorTest, null) {
   bmstu::vector<int> a;

@@ -10,19 +10,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 set(CMAKE_CXX_STANDARD 23)
-set(TEST_NAME ${PROJECT_NAME}_tests)
-add_executable(${TEST_NAME} string_test.cpp bmstu_string/bmstu_string.h
-        dummy_vector/dummy_vector.h
-        dummy_vector/array_bundle.h
-        dummy_vector_test.cpp
-        list_test.cpp
-        dummy_list/dummy_list.h
-        optional/optional.h
-
-
-)
-target_link_libraries(${TEST_NAME} gtest_main)
 
 enable_testing()
 include(GoogleTest)
-gtest_discover_tests(${TEST_NAME})
+file(GLOB hw_dirs RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/*_hw)
+message("hw_dirs: ${hw_dirs}")
+add_subdirectory(${hw_dirs})
