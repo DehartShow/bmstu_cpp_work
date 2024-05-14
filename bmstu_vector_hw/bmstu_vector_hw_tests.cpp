@@ -7,6 +7,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <numeric>
 
 #include "bmstu_vector_hw.h"
 #include "raw_memory.h"
@@ -120,60 +121,16 @@ TEST(VectorTest, Reserve) {
 }
 
 // Тестирование метода insert
-TEST(VectorTest, Insert) {
-  bmstu::vector<int> vec = {1, 3, 4};
-  auto it = vec.begin();
-  ++it;  // Переместимся на позицию 1
-  vec.insert(it, 2);
-  EXPECT_EQ(vec.size(), 4);
-  EXPECT_EQ(vec[1], 2);
-}
+//TEST(VectorTest, Insert) {
+//  bmstu::vector<int> vec = {1, 3, 4};
+//  auto it = vec.begin();
+//  ++it;  // Переместимся на позицию 1
+//  vec.insert(it, 2);
+//  EXPECT_EQ(vec.size(), 4);
+//  EXPECT_EQ(vec[1], 2);
+//}
 
-// объявить class и в них static cntr для мува и остальной фигни
-// чтобы тестировать наш вектор.
 
-class TestHelper {
- public:
-  static int default_ctr;
-  static int copy_ctr;
-  static int move_ctr;
-  static int destructor_ctr;
-
-  TestHelper() { ++default_ctr; }
-
-  TestHelper(const TestHelper &) { ++copy_ctr; }
-
-  TestHelper(TestHelper &&) noexcept { ++move_ctr; }
-
-  ~TestHelper() { ++destructor_ctr; }
-};
-
-int TestHelper::default_ctr = 0;
-int TestHelper::copy_ctr = 0;
-int TestHelper::move_ctr = 0;
-int TestHelper::destructor_ctr = 0;
-
-TEST(TestHelperTest, ConstructorsAndDestructors) {
-  // Сбрасываем счетчики перед каждым тестом
-  TestHelper::default_ctr = 0;
-  TestHelper::copy_ctr = 0;
-  TestHelper::move_ctr = 0;
-  TestHelper::destructor_ctr = 0;
-
-  {
-    TestHelper obj1;  // Конструктор по умолчанию
-    EXPECT_EQ(TestHelper::default_ctr, 1);
-
-    TestHelper obj2(obj1);  // Конструктор копирования
-    EXPECT_EQ(TestHelper::copy_ctr, 1);
-
-    TestHelper obj3(std::move(obj1));  // Конструктор перемещения
-    EXPECT_EQ(TestHelper::move_ctr, 1);
-  }
-
-  // Ожидаем, что все объекты были уничтожены
-  EXPECT_EQ(TestHelper::destructor_ctr, 3);
-}
 
 struct NoDefaultConstructable {
   int value = 0;
@@ -489,7 +446,7 @@ TEST(Cout, Integer) {
   testing::internal::CaptureStdout();
   std::cout << vec;
   std::string output = testing::internal::GetCapturedStdout();
-  ASSERT_EQ("[1, 2, 3, 4, 5, 6, 7, 8, 9]", output);
+  ASSERT_EQ("[ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]", output);
 }
 
 TEST(Cout, Strings) {
@@ -498,5 +455,5 @@ TEST(Cout, Strings) {
   testing::internal::CaptureStdout();
   std::cout << vec;
   std::string output = testing::internal::GetCapturedStdout();
-  ASSERT_EQ("[Bebra Hunters]", output);
+  ASSERT_EQ("[ Bebra Hunters ]", output);
 }

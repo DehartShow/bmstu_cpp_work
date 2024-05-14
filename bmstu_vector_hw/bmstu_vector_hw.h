@@ -51,12 +51,12 @@ class vector {
       ptrdiff_t result = a.m_ptr - b.m_ptr;
       return result;
     }
-    iterator &operator+(size_t n) noexcept {
+    iterator operator+(size_t n) noexcept {
       iterator copy(*this);
       copy.m_ptr += n;
       return copy;
     }
-    iterator &operator-(size_t n) noexcept {
+    iterator operator-(size_t n) noexcept {
       iterator copy(*this);
       copy.m_ptr += n;
       return copy;
@@ -70,11 +70,13 @@ class vector {
   vector() noexcept = default;
 
   /// явное конcтруирование
-  explicit vector(size_t size) {
-    std::uninitialized_value_construct_n(data_.GetBuffer(), size);
+  explicit vector(size_t size) : data_(size), size_(size) {
+    if constexpr (std::is_default_constructible_v<Type>) {
+      std::uninitialized_value_construct_n(data_.GetBuffer(), size_);
+    }
   }
 
-  vector(const vector &other) : data_(other.size_), size_(other.size_) {
+  vector(const vector<Type> &other) : data_(other.size_), size_(other.size_) {
     std::uninitialized_copy_n(other.data_.GetBuffer(), other.size_,
                               this->data_.GetBuffer());
   }
@@ -148,11 +150,11 @@ class vector {
   typename const_iterator::reference at(size_t index) const {
     return const_cast<typename const_iterator::reference>(data_[index]);
   }
-  size_t size() const noexcept { return size_; }
+  [[nodiscard]] size_t size() const noexcept { return size_; }
 
-  size_t capacity() const noexcept { return data_.GetCapacity(); }
+  [[nodiscard]] size_t capacity() const noexcept { return data_.GetCapacity(); }
 
-  bool empty() const noexcept { return size_ == 0; }
+  [[nodiscard]] bool empty() const noexcept { return size_ == 0; }
 
   void swap(vector &other) noexcept {
     std::swap(size_, other.size_);
@@ -265,7 +267,7 @@ class vector {
     return begin() + index;
   }
 
-  iterator insert(const_iterator pos, Type &&value) {
+  void insert(const_iterator pos, Type &&value) {
     emplace(pos, std::forward<Type>(value));
   }
 
