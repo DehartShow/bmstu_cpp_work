@@ -120,15 +120,15 @@ TEST(VectorTest, Reserve) {
   EXPECT_GE(vec.capacity(), 10);
 }
 
-// Тестирование метода insert
-//TEST(VectorTest, Insert) {
-//  bmstu::vector<int> vec = {1, 3, 4};
-//  auto it = vec.begin();
-//  ++it;  // Переместимся на позицию 1
-//  vec.insert(it, 2);
-//  EXPECT_EQ(vec.size(), 4);
-//  EXPECT_EQ(vec[1], 2);
-//}
+
+TEST(VectorTest, Insert) {
+  bmstu::vector<int> vec = {1, 3, 4};
+  auto it = vec.begin();
+  ++it;
+  vec.insert(it, 2);
+  EXPECT_EQ(vec.size(), 4);
+  EXPECT_EQ(vec[1], 2);
+}
 
 
 
