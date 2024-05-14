@@ -1,6 +1,6 @@
 #include "dummy_vector.h"
 
-#include <../cmake-build-debug/_deps/googletest-src/googletest/include/gtest/gtest.h>
+#include <gtest/gtest.h>
 
 #include <iostream>
 #include <numeric>
@@ -493,7 +493,7 @@ TEST(DummyVectorTest, Capacity) {
 }
 
 TEST(DummyVectorTest, Iterate) {
-  // Итерирование по bmstu::dummy_vector
+  // Итерирование по bmstu::dummy_vector_hw
   {
     // Непустой вектор
     {

@@ -21,7 +21,6 @@ class list {
  public:
   template <typename value_t>
   struct list_iterator {
-    friend class node;
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = value_t;
     using difference_type = ptrdiff_t;
