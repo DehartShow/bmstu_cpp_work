@@ -461,7 +461,7 @@ struct DummyExeptionable {
   }
 
   DummyExeptionable(DummyExeptionable &&other) { count_movable += 1; }
-  DummyExeptionable(DummyExeptionable &other) { count_copyable += 1; }
+  DummyExeptionable(const DummyExeptionable &other) { count_copyable += 1; }
 
   DummyExeptionable &operator=(DummyExeptionable &&other) noexcept {
     if (this == &other) {
@@ -507,7 +507,6 @@ TEST(Vector_test, Exceptionable) {
     std::cout << DummyExeptionable::count_copyable << std::endl;
     std::cout << DummyExeptionable::count_movable << std::endl;
     vec.emplace(vec.end(), std::move(DummyExeptionable()));
-
   } catch (...) {
     std::cout << DummyExeptionable::count_construction << std::endl;
     std::cout << DummyExeptionable::count_destruction << std::endl;
