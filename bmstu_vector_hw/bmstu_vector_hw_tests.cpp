@@ -460,14 +460,10 @@ struct DummyExeptionable {
     std::cout << "I constructed\n";
   }
 
-  DummyExeptionable(DummyExeptionable &&other){
-    count_movable += 1;
-  }
-  DummyExeptionable(DummyExeptionable &other){
-    count_copyable += 1;
-  }
+  DummyExeptionable(DummyExeptionable &&other) { count_movable += 1; }
+  DummyExeptionable(DummyExeptionable &other) { count_copyable += 1; }
 
-  DummyExeptionable &operator=(DummyExeptionable &&other)  noexcept {
+  DummyExeptionable &operator=(DummyExeptionable &&other) noexcept {
     if (this == &other) {
       return *this;
     }
@@ -499,7 +495,6 @@ int DummyExeptionable::count_construction = 0;
 int DummyExeptionable::count_destruction = 0;
 int DummyExeptionable::count_movable = 0;
 int DummyExeptionable::count_copyable = 0;
-
 
 TEST(Vector_test, Exceptionable) {
   try {

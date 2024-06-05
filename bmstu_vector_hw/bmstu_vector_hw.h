@@ -209,20 +209,9 @@ class vector {
   Type &emplace_back(Args &&...args) {
     if (size_ == data_.GetCapacity()) {
       auto new_capacity = (size_ == 0) ? 1 : size_ * 2;
-      raw_memory<Type> new_data(new_capacity);
-      if constexpr (std::is_nothrow_move_constructible_v<Type> ||
-                    !std::is_copy_constructible_v<Type>) {
-        std::uninitialized_move_n(data_.GetBuffer(), size_,
-                                  new_data.GetBuffer());
-      } else {
-        std::uninitialized_copy_n(data_.GetBuffer(), size_,
-                                  new_data.GetBuffer());
-      }
-      std::destroy_n(data_.GetBuffer(), size_);
-      data_.swap(std::move(new_data));
-    } else {
-      new (data_.GetBuffer() + size_) Type(std::forward<Args>(args)...);
+      this->reserve(new_capacity);
     }
+    new (data_.GetBuffer() + size_) Type(std::forward<Args>(args)...);
     ++size_;
     return data_[size_ - 1];
   }
@@ -231,9 +220,9 @@ class vector {
   iterator emplace(const_iterator pos, Args &&...args) {
     iterator tmp_pos = begin();
     if (pos == cend()) {
-      push_back(std::forward<Args>(args)...);
+      emplace_back(std::forward<Args>(args)...);
       return tmp_pos = end() - 1;
-    } else if(size_ == data_.GetCapacity()) {
+    } else if (size_ == data_.GetCapacity()) {
       size_t new_capacity = (size_ == 0) ? 1 : size_ * 2;
       raw_memory<Type> new_data(new_capacity);
       size_t destination_pos = pos - begin();
@@ -292,7 +281,7 @@ class vector {
     emplace(pos, std::forward<Type>(value));
   }
 
-  void push_back(Type &&value) { emplace_back(std::forward<Type>(value)); }
+  void push_back(Type &&value) { emplace(end(), std::forward<Type>(value)); }
 
   bool operator==(const vector<Type> &other) const noexcept {
     if (size_ != other.size_) {
