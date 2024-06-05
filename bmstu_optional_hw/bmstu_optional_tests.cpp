@@ -418,7 +418,7 @@ TEST(Optional, X_Move2) {
   ASSERT_EQ(X::instance_count(), 0);
   {
     X x_1;
-    bmstu::optional<X> first(z_1);
+    bmstu::optional<X> first(x_1);
     bmstu::optional<X> second;
     first = std::move(second);
     ASSERT_FALSE(first.has_value());
