@@ -209,9 +209,20 @@ class vector {
   Type &emplace_back(Args &&...args) {
     if (size_ == data_.GetCapacity()) {
       auto new_capacity = (size_ == 0) ? 1 : size_ * 2;
-      this->reserve(new_capacity);
+      raw_memory<Type> new_data(new_capacity);
+      if constexpr (std::is_nothrow_move_constructible_v<Type> ||
+                    !std::is_copy_constructible_v<Type>) {
+        std::uninitialized_move_n(data_.GetBuffer(), size_,
+                                  new_data.GetBuffer());
+      } else {
+        std::uninitialized_copy_n(data_.GetBuffer(), size_,
+                                  new_data.GetBuffer());
+      }
+      std::destroy_n(data_.GetBuffer(), size_);
+      data_.swap(std::move(new_data));
+    } else {
+      new (data_.GetBuffer() + size_) Type(std::forward<Args>(args)...);
     }
-    new (data_.GetBuffer() + size_) Type(std::forward<Args>(args)...);
     ++size_;
     return data_[size_ - 1];
   }
@@ -222,7 +233,7 @@ class vector {
     if (pos == cend()) {
       push_back(std::forward<Args>(args)...);
       return tmp_pos = end() - 1;
-    } else {
+    } else if(size_ == data_.GetCapacity()) {
       size_t new_capacity = (size_ == 0) ? 1 : size_ * 2;
       raw_memory<Type> new_data(new_capacity);
       size_t destination_pos = pos - begin();
@@ -233,8 +244,13 @@ class vector {
         std::uninitialized_move_n(data_.GetBuffer(), destination_pos,
                                   new_data.GetBuffer());
       } else {
-        std::uninitialized_copy_n(data_.GetBuffer(), destination_pos,
-                                  new_data.GetBuffer());
+        try {
+          std::uninitialized_copy_n(data_.GetBuffer(), destination_pos,
+                                    new_data.GetBuffer());
+        } catch (...) {
+          std::destroy_n(new_data.GetBuffer() + destination_pos, 1);
+          throw;
+        }
       }
       if constexpr (std::is_nothrow_move_constructible_v<Type> ||
                     !std::is_copy_constructible_v<Type>) {
@@ -242,16 +258,21 @@ class vector {
                                   size_ - destination_pos,
                                   new_data.GetBuffer() + destination_pos + 1);
       } else {
-        std::uninitialized_copy_n(data_.GetBuffer() + destination_pos,
-                                  size_ - destination_pos,
-                                  new_data.GetBuffer() + destination_pos + 1);
+        try {
+          std::uninitialized_copy_n(data_.GetBuffer() + destination_pos,
+                                    size_ - destination_pos,
+                                    new_data.GetBuffer() + destination_pos + 1);
+        } catch (...) {
+          std::destroy_n(new_data.GetBuffer() + destination_pos, 1);
+          throw;
+        }
       }
       std::destroy_n(data_.GetBuffer(), size_);
       data_.swap(std::move(new_data));
       tmp_pos = begin() + destination_pos;
       ++size_;
-      return tmp_pos;
     }
+    return tmp_pos;
   }
 
   iterator erase(const_iterator pos) {

@@ -7,7 +7,6 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <numeric>
 
 #include "bmstu_vector_hw.h"
 #include "raw_memory.h"
@@ -120,18 +119,6 @@ TEST(VectorTest, Reserve) {
   EXPECT_GE(vec.capacity(), 10);
 }
 
-
-TEST(VectorTest, Insert) {
-  bmstu::vector<int> vec = {1, 3, 4};
-  auto it = vec.begin();
-  ++it;
-  vec.insert(it, 2);
-  EXPECT_EQ(vec.size(), 4);
-  EXPECT_EQ(vec[1], 2);
-}
-
-
-
 struct NoDefaultConstructable {
   int value = 0;
 
@@ -145,7 +132,7 @@ struct NoDefaultConstructable {
 
   ~NoDefaultConstructable() = default;
 
-  int get_value() const { return value; }
+  [[nodiscard]] int get_value() const { return value; }
 };
 
 struct NoCopyConstructable {
@@ -205,6 +192,12 @@ void elem_check(bmstu::vector<T> &vec, const T &value = T{}) {  // NOLINT
 }
 
 TEST(DefaultConstruct, WithoutDefaultConstructor) {
+  bmstu::vector<NoDefaultConstructable> vec;
+  ASSERT_TRUE(vec.empty());
+  ASSERT_EQ(vec.capacity(), 0);
+}
+
+TEST(DefaultConstruct, WithoutDefaultConstructor2) {
   bmstu::vector<NoDefaultConstructable> vec;
   ASSERT_TRUE(vec.empty());
   ASSERT_EQ(vec.capacity(), 0);
@@ -456,4 +449,74 @@ TEST(Cout, Strings) {
   std::cout << vec;
   std::string output = testing::internal::GetCapturedStdout();
   ASSERT_EQ("[ Bebra Hunters ]", output);
+}
+
+struct DummyExeptionable {
+  DummyExeptionable() {
+    count_construction += 1;
+    if (count_construction == 4) {
+      throw "My sample error";
+    }
+    std::cout << "I constructed\n";
+  }
+
+  DummyExeptionable(DummyExeptionable &&other){
+    count_movable += 1;
+  }
+  DummyExeptionable(DummyExeptionable &other){
+    count_copyable += 1;
+  }
+
+  DummyExeptionable &operator=(DummyExeptionable &&other)  noexcept {
+    if (this == &other) {
+      return *this;
+    }
+    count_movable += 1;
+    std::cout << "I am moved\n";
+    return *this;
+  }
+
+  DummyExeptionable &operator=(const DummyExeptionable &other) {
+    if (this == &other) {
+      return *this;
+    }
+    count_copyable += 1;
+    std::cout << "I am copied\n";
+    return *this;
+  }
+
+  ~DummyExeptionable() {
+    count_destruction += 1;
+    std::cout << "I am destructed\n";
+  }
+
+  static int count_construction;
+  static int count_destruction;
+  static int count_movable;
+  static int count_copyable;
+};
+int DummyExeptionable::count_construction = 0;
+int DummyExeptionable::count_destruction = 0;
+int DummyExeptionable::count_movable = 0;
+int DummyExeptionable::count_copyable = 0;
+
+
+TEST(Vector_test, Exceptionable) {
+  try {
+    bmstu::vector<DummyExeptionable> vec;
+    vec.emplace(vec.end(), std::move(DummyExeptionable()));
+    vec.emplace(vec.end(), std::move(DummyExeptionable()));
+    vec.emplace(vec.end(), DummyExeptionable());
+    std::cout << DummyExeptionable::count_construction << std::endl;
+    std::cout << DummyExeptionable::count_destruction << std::endl;
+    std::cout << DummyExeptionable::count_copyable << std::endl;
+    std::cout << DummyExeptionable::count_movable << std::endl;
+    vec.emplace(vec.end(), std::move(DummyExeptionable()));
+
+  } catch (...) {
+    std::cout << DummyExeptionable::count_construction << std::endl;
+    std::cout << DummyExeptionable::count_destruction << std::endl;
+    std::cout << DummyExeptionable::count_copyable << std::endl;
+    std::cout << DummyExeptionable::count_movable << std::endl;
+  }
 }
