@@ -522,3 +522,13 @@ TEST(ListTest, IteratorsHard) {
     ASSERT_TRUE(my_list_2[a - 1] == a);
   }
 }
+
+TEST(ListTest, Concat) {
+  auto l1 = bmstu::list<int>({1, 2, 3, 4});
+  auto l2 = bmstu::list<int>({5, 6, 7, 8});
+  auto l3 = bmstu::list<int>({1, 2, 3, 4, 5, 6, 7, 8});
+  l1.concat(l2);
+  ASSERT_EQ(l2.size(), 0);
+  ASSERT_EQ(l1.size(), 8);
+  ASSERT_EQ(l3, l1);
+}

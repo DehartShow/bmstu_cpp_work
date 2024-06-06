@@ -263,6 +263,22 @@ class list {
     return pos;
   }
 
+  list<T> &concat(bmstu::list<T> &other) {
+    if (this == &other) return *this;
+
+    if (other.empty()) return *this;
+
+    other.head_->next_node_->prev_node_ = tail_->prev_node_;
+    tail_->prev_node_->next_node_ = other.head_->next_node_;
+    this->tail_ = other.tail_;
+    other.tail_->prev_node_ = other.head_;
+    other.head_->next_node_ = other.tail_;
+
+    size_ += other.size_;
+    other.size_ = 0;
+    return *this;
+  }
+
  private:
   static bool lexicographical_compare_(const list<T> &l, const list<T> &r) {
     auto lb = l.begin();
