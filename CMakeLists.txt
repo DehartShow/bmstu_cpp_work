@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(example_hw_repo)
+project(dehart_hw_repo)
 
 include(FetchContent)
 FetchContent_Declare(

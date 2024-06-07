@@ -263,7 +263,7 @@ class list {
     return pos;
   }
 
-  list<T> &concat(bmstu::list<T> &other) {
+  list<T> &concat(bmstu::list<T> &other) {  // NOLINT
     if (this == &other) return *this;
 
     if (other.empty()) return *this;
