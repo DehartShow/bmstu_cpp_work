@@ -527,8 +527,26 @@ TEST(ListTest, Concat) {
   auto l1 = bmstu::list<int>({1, 2, 3, 4});
   auto l2 = bmstu::list<int>({5, 6, 7, 8});
   auto l3 = bmstu::list<int>({1, 2, 3, 4, 5, 6, 7, 8});
-  l1.concat(l2);
+  l1.concat(std::move(l2));
   ASSERT_EQ(l2.size(), 0);
   ASSERT_EQ(l1.size(), 8);
   ASSERT_EQ(l3, l1);
+}
+
+TEST(ListTest, Concat2) {
+  auto l1 = bmstu::list<int>({1, 2, 3, 4});
+  auto l2 = bmstu::list<int>({5, 6, 7, 8});
+  auto l3 = bmstu::list<int>({1, 2, 3, 4, 5, 6, 7, 8});
+  l1.concat2(l2);
+  auto l4 = bmstu::list<int>({5, 6, 7, 8});
+  ASSERT_EQ(l2.size(), 4);
+  ASSERT_EQ(l1.size(), 8);
+  ASSERT_EQ(l3, l1);
+  ASSERT_EQ(l2, l4);
+}
+
+
+TEST(ListTest, PrintTest) {
+  auto l3 = bmstu::list<int>({1, 2, 3, 4, 5, 6, 7, 8});
+  l3.print_address();
 }
