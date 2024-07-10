@@ -2,9 +2,10 @@
 // Created by dehart on 12/17/23.
 //
 #pragma once
-
+#include <memory>
 #include <exception>
 #include <optional>
+
 
 namespace bmstu {
 class bad_optional_access : public std::exception {
@@ -22,13 +23,13 @@ class optional {
 
   optional(const T &value) {  // NOLINT
     is_initialized_ = true;
-    T *val = new(&data_[0])T{value};
-    (void) (&val);
+    T *val = std::construct_at(static_cast<T *>(static_cast<void *>(&data_[0])), value);
+    (void) (&val); ///
   }
 
   optional(T &&value) {  // NOLINT
     is_initialized_ = true;
-    T *val = new(&data_[0]) T(std::move(value));
+    T *val = std::construct_at(static_cast<T *>(static_cast<void *>(&data_[0])), std::move(value));
     (void) (&val);
   }
 
@@ -166,11 +167,13 @@ class optional {
 
   void reset() {
     if (is_initialized_) {
-      T *ptr = static_cast<T *>(static_cast<void *>(&data_[0]));;
-      ptr->~T();
+      std::destroy_at(&data_[0]);
       is_initialized_ = false;
     }
   }
+
+
+
 
   ~optional() {
     if (is_initialized_) {

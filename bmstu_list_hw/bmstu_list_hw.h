@@ -268,11 +268,11 @@ class list {
 
     if (other.empty()) return *this;
 
-    node * this_last_item = tail_->prev_node_;
-    node * other_first_item = other.head_->next_node_;
+    node *this_last_item = tail_->prev_node_;
+    node *other_first_item = other.head_->next_node_;
     this_last_item->next_node_ = other_first_item;
     other_first_item->prev_node_ = this_last_item;
-    node *tmp_this_tail = tail_; // new other tail
+    node *tmp_this_tail = tail_;  // new other tail
     this->tail_ = other.tail_;
     other.tail_ = tmp_this_tail;
     other.head_->next_node_ = tmp_this_tail;
@@ -281,11 +281,11 @@ class list {
     other.size_ = 0;
     return *this;
   }
-  list &concat2(list &other){
+  list &concat2(list &other) {
     if (this == &other) return *this;
     if (other.empty()) return *this;
 
-    for (auto &val : other){
+    for (auto &val : other) {
       push_back(val);
     }
     return *this;

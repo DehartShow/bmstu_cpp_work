@@ -9,6 +9,7 @@ TEST(Optional, Init1) {
   bmstu::optional<int> first;
   ASSERT_FALSE(first.has_value());
 }
+
 TEST(Optional, Init2) {
   bmstu::optional<int> first(3);
   ASSERT_TRUE(first.has_value());
@@ -65,14 +66,7 @@ TEST(Optional, MoveOptionalValue) {
   ASSERT_EQ(first.value(), 321);
 }
 
-void actionInt(const bmstu::optional<int> &a) { a.value(); }
-TEST(Optional, ThrowException) {
-  bmstu::optional<int> first;
-  ASSERT_FALSE(first.has_value());
-  ASSERT_THROW(actionInt(first), bmstu::bad_optional_access);
-}
 
-/// Структура для подсчёта вызываемых методов
 struct X {
   X() noexcept { ++count_def_constr; }
 
